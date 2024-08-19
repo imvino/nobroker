@@ -3,59 +3,14 @@ import Map, { Marker, NavigationControl, Popup, Source, Layer } from 'react-map-
 import 'mapbox-gl/dist/mapbox-gl.css';
 import axios from 'axios';
 import { point, circle } from '@turf/turf';
+import metroStations from './metro.js';
+
 
 const MAPBOX_TOKEN = 'pk.eyJ1Ijoid2VicGlzdG9sIiwiYSI6ImNrNGFtcGxlajAzdWwzcnFmbDhmYW8ya3AifQ.2CrmPWAPePYQbN9JqalaSQ';
 
 // Office coordinates
 const OFFICE_LAT = 13.0825281;
 const OFFICE_LNG = 80.2131445;
-
-// Metro stations
-const metroStations =[
-    { "name": "Wimco Nagar depot",latitude: 13.1839089, longitude: 80.3090944, "lineColor": "red" },
-    { "name": "Wimco Nagar", latitude: 13.1792804, longitude: 80.3073398, "lineColor": "red" },
-    { "name": "kaladipet", latitude: 13.1505483, longitude: 80.2994025, "lineColor": "red" },
-    { "name": "tt", latitude: 13.1601868, longitude: 80.3024406, "lineColor": "red" },
-    { "name": "tolgate", latitude: 13.1431016, longitude: 80.2963683, "lineColor": "red" },
-    { "name": "Thiruvottiyur", latitude: 13.1717903, longitude: 80.3052827, "lineColor": "red" },
-    { "name": "New washermanpet",latitude: 13.1344440, longitude: 80.2930250, "lineColor": "red" },
-    { "name": "Tondiarpet",latitude: 13.1246283, longitude: 80.2888121, "lineColor": "red" },
-    { "name": "STC",latitude: 13.1157089, longitude: 80.2847040, "lineColor": "red" },
-    { "name": "Washermanpet",latitude: 13.1087205, longitude: 80.2819920, "lineColor": "red" },
-    { "name": "Mannadi", latitude: 13.0952931, longitude: 80.2862029, "lineColor": "orange" },
-    { "name": "High Court", latitude: 13.0872007, longitude: 80.2849810, "lineColor": "orange" },
-    { "name": "Chennai Central", latitude: 13.0824112, longitude: 80.2759651, "lineColor": "orange" },
-    { "name": "Government Estate", latitude: 13.0696074, longitude: 80.2729768, "lineColor": "orange" },
-    { "name": "LIC", latitude: 13.0643882, longitude: 80.2657187, "lineColor": "orange" },
-    { "name": "Thousand Lights",latitude: 13.0585101, longitude: 80.2587601, "lineColor": "orange" },
-    { "name": "ag/dms", latitude: 13.0458135, longitude: 80.2481997, "lineColor": "orange" },
-    { "name": "Teynampet", latitude: 13.0368331, longitude: 80.2465412, "lineColor": "orange" },
-    { "name": "Nandanam", latitude: 13.0317041, longitude: 80.2412423, "lineColor": "orange" },
-
-    { "name": "Saidapet", latitude: 13.0239835, longitude: 80.2280812, "lineColor": "orange" },
-    { "name": "Little Mount", latitude: 13.0146575, longitude: 80.2241584, "lineColor": "orange" },
-    { "name": "Guindy", latitude: 13.0092521, longitude: 80.2131033, "lineColor": "orange" },
-    { "name": "Alandur", latitude: 13.0042443, longitude: 80.2014280, "lineColor": "orange" },
-    { "name": "Meenambakkam", latitude: 12.9875661, longitude: 80.1764421, "lineColor": "orange" },
-    { "name": "Chennai Airport", latitude: 12.9807893, longitude: 80.1642018, "lineColor": "orange" },
-
-
-    { "name": "St. Thomas Mount", latitude: 12.9953594, longitude: 80.1997066, "lineColor": "blue" },
-    { "name": "Ekkattuthangal", latitude: 13.0168960, longitude: 80.2054160, "lineColor": "blue" },
-    { "name": "Ashok Nagar KK Nagar", latitude: 13.0354697, longitude: 80.2110736, "lineColor": "blue" },
-    { "name": "Vadapalani", latitude: 13.0509241, longitude: 80.2120377, "lineColor": "blue" },
-    { "name": "Arumbakkam",latitude: 13.0616742, longitude: 80.2116241, "lineColor": "blue" },
-    { "name": "CMBT", latitude: 13.0685546, longitude: 80.2039456, "lineColor": "blue" },
-    { "name": "Koyambedu", latitude: 13.0734162, longitude: 80.1948267, "lineColor": "blue" },
-    { "name": "Thirumangalam", latitude: 13.0852455, longitude: 80.2015489, "lineColor": "blue" },
-    { "name": "Anna Nagar Tower", latitude: 13.0849711, longitude: 80.2088385, "lineColor": "blue" },
-    { "name": "Anna Nagar East", latitude: 13.0845442, longitude: 80.2196589, "lineColor": "blue" },
-    { "name": "Shenoy Nagar", latitude: 13.0787531, longitude: 80.2252525, "lineColor": "blue" },
-    { "name": "Pachaiyappa's College", latitude: 13.0755951, longitude: 80.2328141, "lineColor": "blue" },
-    { "name": "Kilpauk Medical College", latitude: 13.0776447, longitude: 80.2426295,"lineColor": "blue" },
-    { "name": "Nehru Park", latitude: 13.0787187, longitude: 80.2504458, "lineColor": "blue" },
-    { "name": "Egmore", latitude: 13.0802532, longitude: 80.2630223, "lineColor": "blue" }
-];
 
 const MapboxNobrokerMap = () => {
     const [viewState, setViewState] = useState({
@@ -68,6 +23,7 @@ const MapboxNobrokerMap = () => {
     const [selectedProperty, setSelectedProperty] = useState(null);
     const [selectedMetroStation, setSelectedMetroStation] = useState(null);
     const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Filter states
     const [transitScore, setTransitScore] = useState(7);
@@ -87,18 +43,6 @@ const MapboxNobrokerMap = () => {
         const fetchAllProperties = async () => {
             const allFetchedProperties = [];
             setError(null);
-
-            // for (let bhk = 1; bhk <= 3; bhk++) {
-            //     for (let rent = 10000; rent <= 25000; rent += 1000) {
-            //             // Fetch API data
-            //             console.log(`/nobroker_api_data2/BHK${bhk}_rent_${rent - 1000}_${rent}.json`)
-            //             const apiResponse = await axios.get(`/nobroker_api_data2/BHK${bhk}_rent_${rent - 1000}_${rent}.json`);
-            //             const apiData = apiResponse.data;
-            //             if (apiData && apiData.data) {
-            //                 allFetchedProperties.push(...apiData.data);
-            //             }
-            //         }
-            //     }
 
             for (let bhk = 1; bhk <= 3; bhk++) {
                 for (let rent = 10000; rent <= 25000; rent += 1000) {
@@ -158,17 +102,18 @@ const MapboxNobrokerMap = () => {
 
     useEffect(() => {
         if (allProperties.length > 0) {
-            console.log(JSON.stringify(allProperties.map(v=>v.address)),'allProperties')
             const filtered = allProperties?.filter(property => {
                 const totalCost = (parseInt(property.formattedPrice.replace(/,/g, '')) || 0) +
                     (parseInt(property.formattedMaintenanceAmount?.replace(/,/g, '')) || 0);
                 return property.bathroom >= bathrooms &&
                     property.propertySize >= minPropertySize &&
+                    property.photos.length !=0 &&
+                    (property.waterSupply === 'CORPORATION' ||  property.waterSupply === 'CORP_BORE') &&
                     (!useTransitFilter || (property.score?.transit && property.score.transit >= transitScore)) &&
                     (!useLifestyleFilter || (property.score?.lifestyle && property.score.lifestyle >= lifestyleScore)) &&
                     totalCost <= maxTotalCost;
             });
-            // console.log(filtered.map(v=>v.address),'filtered')
+          // console.log(filtered.map(v=>v.photos),'filtered')
             setFilteredProperties(filtered);
         }
     }, [allProperties, bathrooms, minPropertySize, transitScore, lifestyleScore, useTransitFilter, useLifestyleFilter, maxTotalCost]);
@@ -185,7 +130,7 @@ const MapboxNobrokerMap = () => {
     // Generate GeoJSON for metro station circles
     const metroCircles = {
         type: 'FeatureCollection',
-        features: metroStations.map(station =>
+        features: metroStations().map(station =>
             generateCircle([station.longitude, station.latitude], 1)
         )
     };
@@ -211,6 +156,21 @@ const MapboxNobrokerMap = () => {
         return deg * (Math.PI/180)
     };
 
+    const handlePropertyClick = (property) => {
+        setSelectedProperty(property);
+        setViewState({
+            ...viewState,
+            latitude: parseFloat(property.latitude),
+            longitude: parseFloat(property.longitude),
+            zoom: 14
+        });
+    };
+
+    const filteredAndSearchedProperties = filteredProperties.filter(property =>
+        property.secondaryTitle.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+
     if (error) {
         return <div>Error: {error}</div>;
     }
@@ -222,7 +182,7 @@ const MapboxNobrokerMap = () => {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <label>
                         <input
-                            type="checkbox"
+                            type='checkbox'
                             checked={useTransitFilter}
                             onChange={(e) => setUseTransitFilter(e.target.checked)}
                         />
@@ -242,7 +202,7 @@ const MapboxNobrokerMap = () => {
                     )}
                     <label>
                         <input
-                            type="checkbox"
+                            type='checkbox'
                             checked={useLifestyleFilter}
                             onChange={(e) => setUseLifestyleFilter(e.target.checked)}
                         />
@@ -261,7 +221,7 @@ const MapboxNobrokerMap = () => {
                         </label>
                     )}
                     <label>
-                         Bathrooms:
+                        Bathrooms:
                         <input
                             type='number'
                             value={bathrooms}
@@ -289,103 +249,126 @@ const MapboxNobrokerMap = () => {
                     </label>
                 </div>
             </div>
-            <div style={{ flex: 1 }}>
-                <Map
-                    {...viewState}
-                    onMove={evt => setViewState(evt.viewState)}
-                    onClick={handleMapClick}
-                    style={{ width: '100%', height: '100%' }}
-                    mapStyle='mapbox://styles/mapbox/streets-v11'
-                    mapboxAccessToken={MAPBOX_TOKEN}
-                >
-                    <NavigationControl position='top-right'/>
-
-                    {/* Office Marker */}
-                    <Marker
-                        longitude={OFFICE_LNG}
-                        latitude={OFFICE_LAT}
-                        anchor='bottom'
-                    >
-                        <div style={{
-                            backgroundColor: 'blue',
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            cursor: 'pointer'
-                        }}/>
-                    </Marker>
-
-                    {/* Property Markers */}
-                    {filteredProperties.map((property) => (
-                        <Marker
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <div style={{ width: '300px', height: '100%', overflowY: 'auto', backgroundColor: '#f0f0f0', padding: '10px' }}>
+                    <input
+                        type="text"
+                        placeholder="Search properties..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ width: '100%', marginBottom: '10px', padding: '5px' }}
+                    />
+                    {filteredAndSearchedProperties.map((property) => (
+                        <div
                             key={property.id}
-                            longitude={parseFloat(property.longitude)}
-                            latitude={parseFloat(property.latitude)}
-                            anchor='bottom'
-                            onClick={e => {
-                                e.originalEvent.stopPropagation();
-                                setSelectedProperty(property);
+                            onClick={() => handlePropertyClick(property)}
+                            style={{
+                                cursor: 'pointer',
+                                padding: '5px',
+                                marginBottom: '5px',
+                                backgroundColor: selectedProperty?.id === property.id ? '#ddd' : '#000'
                             }}
                         >
-                            <div style={{
-                                backgroundColor: 'red',
-                                width: '10px',
-                                height: '10px',
-                                borderRadius: '50%',
-                                cursor: 'pointer'
-                            }}/>
-                        </Marker>
+                            {property.secondaryTitle}
+                        </div>
                     ))}
+                </div>
+                <div style={{ flex: 1, position: 'relative' }}>
+                    <Map
+                        {...viewState}
+                        onMove={evt => setViewState(evt.viewState)}
+                        onClick={handleMapClick}
+                        style={{ width: '100%', height: '100%' }}
+                        mapStyle='mapbox://styles/mapbox/streets-v11'
+                        mapboxAccessToken={MAPBOX_TOKEN}
+                    >
+                        <NavigationControl position='top-right'/>
 
-                    {/* Metro Station Markers */}
-                    {metroStations.map((station, index) => (
+                        {/* Office Marker */}
                         <Marker
-                            key={index}
-                            longitude={station.longitude}
-                            latitude={station.latitude}
+                            longitude={OFFICE_LNG}
+                            latitude={OFFICE_LAT}
                             anchor='bottom'
-                            onClick={e => {
-                                e.originalEvent.stopPropagation();
-                                setSelectedMetroStation(station);
-                            }}
                         >
                             <div style={{
-                                backgroundColor: 'green',
-                                width: '15px',
-                                height: '15px',
+                                backgroundColor: 'blue',
+                                width: '20px',
+                                height: '20px',
                                 borderRadius: '50%',
                                 cursor: 'pointer'
                             }}/>
                         </Marker>
-                    ))}
 
-                    {/* Office 10km Radius Circle */}
-                    <Source id="office-radius" type="geojson" data={officeRadius}>
-                        <Layer
-                            id="office-radius-layer"
-                            type="fill"
-                            paint={{
-                                'fill-color': 'rgba(0, 0, 255, 0.1)',
-                                'fill-outline-color': 'blue'
-                            }}
-                        />
-                    </Source>
+                        {/* Property Markers */}
+                        {filteredProperties.map((property) => (
+                            <Marker
+                                key={property.id}
+                                longitude={parseFloat(property.longitude)}
+                                latitude={parseFloat(property.latitude)}
+                                anchor='bottom'
+                                onClick={e => {
+                                    e.originalEvent.stopPropagation();
+                                    setSelectedProperty(property);
+                                }}
+                            >
+                                <div style={{
+                                    backgroundColor: 'red',
+                                    width: '10px',
+                                    height: '10px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer'
+                                }}/>
+                            </Marker>
+                        ))}
 
-                    {/* Metro Station Circles */}
-                    <Source id="metro-circles" type="geojson" data={metroCircles}>
-                        <Layer
-                            id="metro-circle-layer"
-                            type="fill"
-                            paint={{
-                                'fill-color': 'rgba(0, 255, 0, 0.1)',
-                                'fill-outline-color': 'green'
-                            }}
-                        />
-                    </Source>
+                        {/* Metro Station Markers */}
+                        {metroStations().map((station, index) => (
+                            <Marker
+                                key={index}
+                                longitude={station.longitude}
+                                latitude={station.latitude}
+                                anchor='bottom'
+                                onClick={e => {
+                                    e.originalEvent.stopPropagation();
+                                    setSelectedMetroStation(station);
+                                }}
+                            >
+                                <div style={{
+                                    backgroundColor: 'green',
+                                    width: '15px',
+                                    height: '15px',
+                                    borderRadius: '50%',
+                                    cursor: 'pointer'
+                                }}/>
+                            </Marker>
+                        ))}
 
-                    {/* Property Popup */}
-                    {selectedProperty && (
-                        <Popup
+                        {/* Office 10km Radius Circle */}
+                        <Source id="office-radius" type="geojson" data={officeRadius}>
+                            <Layer
+                                id="office-radius-layer"
+                                type="fill"
+                                paint={{
+                                    'fill-color': 'rgba(0, 0, 255, 0.1)',
+                                    'fill-outline-color': 'blue'
+                                }}
+                            />
+                        </Source>
+
+                        {/* Metro Station Circles */}
+                        <Source id="metro-circles" type="geojson" data={metroCircles}>
+                            <Layer
+                                id="metro-circle-layer"
+                                type="fill"
+                                paint={{
+                                    'fill-color': 'rgba(0, 255, 0, 0.1)',
+                                    'fill-outline-color': 'green'
+                                }}
+                            />
+                        </Source>
+
+                        {/* Property Popup */}
+                        {selectedProperty && (<Popup
                             longitude={parseFloat(selectedProperty.longitude)}
                             latitude={parseFloat(selectedProperty.latitude)}
                             anchor='top'
@@ -451,6 +434,7 @@ const MapboxNobrokerMap = () => {
                         </Popup>
                     )}
                 </Map>
+            </div>
             </div>
         </div>
     );

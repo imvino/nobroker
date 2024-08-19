@@ -1,0 +1,47 @@
+export default function metroStations() {
+    return  [
+        { 'name': 'Wimco Nagar depot', latitude: 13.1839089, longitude: 80.3090944, 'lineColor': 'red' },
+        { 'name': 'Wimco Nagar', latitude: 13.1792804, longitude: 80.3073398, 'lineColor': 'red' },
+        { 'name': 'kaladipet', latitude: 13.1505483, longitude: 80.2994025, 'lineColor': 'red' },
+        { 'name': 'tt', latitude: 13.1601868, longitude: 80.3024406, 'lineColor': 'red' },
+        { 'name': 'tolgate', latitude: 13.1431016, longitude: 80.2963683, 'lineColor': 'red' },
+        { 'name': 'Thiruvottiyur', latitude: 13.1717903, longitude: 80.3052827, 'lineColor': 'red' },
+        { 'name': 'New washermanpet', latitude: 13.1344440, longitude: 80.2930250, 'lineColor': 'red' },
+        { 'name': 'Tondiarpet', latitude: 13.1246283, longitude: 80.2888121, 'lineColor': 'red' },
+        { 'name': 'STC', latitude: 13.1157089, longitude: 80.2847040, 'lineColor': 'red' },
+        { 'name': 'Washermanpet', latitude: 13.1087205, longitude: 80.2819920, 'lineColor': 'red' },
+        { 'name': 'Mannadi', latitude: 13.0952931, longitude: 80.2862029, 'lineColor': 'orange' },
+        { 'name': 'High Court', latitude: 13.0872007, longitude: 80.2849810, 'lineColor': 'orange' },
+        { 'name': 'Chennai Central', latitude: 13.0824112, longitude: 80.2759651, 'lineColor': 'orange' },
+        { 'name': 'Government Estate', latitude: 13.0696074, longitude: 80.2729768, 'lineColor': 'orange' },
+        { 'name': 'LIC', latitude: 13.0643882, longitude: 80.2657187, 'lineColor': 'orange' },
+        { 'name': 'Thousand Lights', latitude: 13.0585101, longitude: 80.2587601, 'lineColor': 'orange' },
+        { 'name': 'ag/dms', latitude: 13.0458135, longitude: 80.2481997, 'lineColor': 'orange' },
+        { 'name': 'Teynampet', latitude: 13.0368331, longitude: 80.2465412, 'lineColor': 'orange' },
+        { 'name': 'Nandanam', latitude: 13.0317041, longitude: 80.2412423, 'lineColor': 'orange' },
+
+        { 'name': 'Saidapet', latitude: 13.0239835, longitude: 80.2280812, 'lineColor': 'orange' },
+        { 'name': 'Little Mount', latitude: 13.0146575, longitude: 80.2241584, 'lineColor': 'orange' },
+        { 'name': 'Guindy', latitude: 13.0092521, longitude: 80.2131033, 'lineColor': 'orange' },
+        { 'name': 'Alandur', latitude: 13.0042443, longitude: 80.2014280, 'lineColor': 'orange' },
+        { 'name': 'Meenambakkam', latitude: 12.9875661, longitude: 80.1764421, 'lineColor': 'orange' },
+        { 'name': 'Chennai Airport', latitude: 12.9807893, longitude: 80.1642018, 'lineColor': 'orange' },
+
+
+        { 'name': 'St. Thomas Mount', latitude: 12.9953594, longitude: 80.1997066, 'lineColor': 'blue' },
+        { 'name': 'Ekkattuthangal', latitude: 13.0168960, longitude: 80.2054160, 'lineColor': 'blue' },
+        { 'name': 'Ashok Nagar KK Nagar', latitude: 13.0354697, longitude: 80.2110736, 'lineColor': 'blue' },
+        { 'name': 'Vadapalani', latitude: 13.0509241, longitude: 80.2120377, 'lineColor': 'blue' },
+        { 'name': 'Arumbakkam', latitude: 13.0616742, longitude: 80.2116241, 'lineColor': 'blue' },
+        { 'name': 'CMBT', latitude: 13.0685546, longitude: 80.2039456, 'lineColor': 'blue' },
+        { 'name': 'Koyambedu', latitude: 13.0734162, longitude: 80.1948267, 'lineColor': 'blue' },
+        { 'name': 'Thirumangalam', latitude: 13.0852455, longitude: 80.2015489, 'lineColor': 'blue' },
+        { 'name': 'Anna Nagar Tower', latitude: 13.0849711, longitude: 80.2088385, 'lineColor': 'blue' },
+        { 'name': 'Anna Nagar East', latitude: 13.0845442, longitude: 80.2196589, 'lineColor': 'blue' },
+        { 'name': 'Shenoy Nagar', latitude: 13.0787531, longitude: 80.2252525, 'lineColor': 'blue' },
+        { 'name': 'Pachaiyappa\'s College', latitude: 13.0755951, longitude: 80.2328141, 'lineColor': 'blue' },
+        { 'name': 'Kilpauk Medical College', latitude: 13.0776447, longitude: 80.2426295, 'lineColor': 'blue' },
+        { 'name': 'Nehru Park', latitude: 13.0787187, longitude: 80.2504458, 'lineColor': 'blue' },
+        { 'name': 'Egmore', latitude: 13.0802532, longitude: 80.2630223, 'lineColor': 'blue' }
+    ];
+}

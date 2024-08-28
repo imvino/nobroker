@@ -51,7 +51,7 @@ async function main() {
                 await saveData(data, bhk, rent);
             }
             // Wait for a short time to avoid overwhelming the server
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
     console.log("Data collection complete. Check the 'nobroker_api_data' directory for JSON files.");

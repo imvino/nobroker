@@ -29,10 +29,11 @@ const MapboxNobrokerMap = () => {
     const [transitScore, setTransitScore] = useState(7);
     const [lifestyleScore, setLifestyleScore] = useState(7);
     const [bathrooms, setBathrooms] = useState(2);
-    const [minPropertySize, setMinPropertySize] = useState(950);
+    const [bhk, setBhk] = useState(2);
+    const [minPropertySize, setMinPropertySize] = useState(850);
     const [useTransitFilter, setUseTransitFilter] = useState(false);
     const [useLifestyleFilter, setUseLifestyleFilter] = useState(false);
-    const [maxTotalCost, setMaxTotalCost] = useState(18000);
+    const [maxTotalCost, setMaxTotalCost] = useState(19000);
 
     const handleMapClick = useCallback((event) => {
         const { lngLat } = event;
@@ -99,7 +100,6 @@ const MapboxNobrokerMap = () => {
 
         fetchAllProperties();
     }, []);
-
     useEffect(() => {
         if (allProperties.length > 0) {
             const filtered = allProperties?.filter(property => {
@@ -107,6 +107,7 @@ const MapboxNobrokerMap = () => {
                     (parseInt(property.formattedMaintenanceAmount?.replace(/,/g, '')) || 0);
                 return property.bathroom >= bathrooms &&
                     property.propertySize >= minPropertySize &&
+                    property.type == 'BHK'+bhk &&
                     property.photos.length !=0 &&
                     (property.waterSupply === 'CORPORATION' ||  property.waterSupply === 'CORP_BORE') &&
                     (!useTransitFilter || (property.score?.transit && property.score.transit >= transitScore)) &&
@@ -116,7 +117,7 @@ const MapboxNobrokerMap = () => {
           // console.log(filtered.map(v=>v.photos),'filtered')
             setFilteredProperties(filtered);
         }
-    }, [allProperties, bathrooms, minPropertySize, transitScore, lifestyleScore, useTransitFilter, useLifestyleFilter, maxTotalCost]);
+    }, [allProperties, bathrooms, minPropertySize,bhk, transitScore, lifestyleScore, useTransitFilter, useLifestyleFilter, maxTotalCost]);
 
     const getGoogleMapsUrl = (lat, lng) => {
         return `https://www.google.com/maps/dir/?api=1&origin=${OFFICE_LAT},${OFFICE_LNG}&destination=${lat},${lng}`;
@@ -176,7 +177,7 @@ const MapboxNobrokerMap = () => {
     }
 
     return (
-        <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ width: '98vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
             <div style={{ padding: '10px', backgroundColor: '#000', color: 'white' }}>
                 <p>Number of filtered properties: {filteredProperties.length}/{allProperties.length}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -230,6 +231,15 @@ const MapboxNobrokerMap = () => {
                         />
                     </label>
                     <label>
+                        BHK:
+                        <input
+                            type='number'
+                            value={bhk}
+                            onChange={(e) => setBhk(Number(e.target.value))}
+                            min='1'
+                        />
+                    </label>
+                    <label>
                         Min Property Size:
                         <input
                             type='number'
@@ -242,17 +252,19 @@ const MapboxNobrokerMap = () => {
                         Max Total Cost:
                         <input
                             type='number'
+                            step={1000}
                             value={maxTotalCost}
                             onChange={(e) => setMaxTotalCost(Number(e.target.value))}
-                            min='0'
+                            min='15000'
                         />
                     </label>
                 </div>
             </div>
             <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-                <div style={{ width: '300px', height: '100%', overflowY: 'auto', backgroundColor: '#f0f0f0', padding: '10px' }}>
+                <div
+                    style={{ width: '300px', height: '100%', overflowY: 'auto', backgroundColor: '#f0f0f0', padding: '10px' }}>
                     <input
-                        type="text"
+                        type='text'
                         placeholder="Search properties..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

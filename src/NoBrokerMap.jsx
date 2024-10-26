@@ -34,6 +34,7 @@ const MapboxNobrokerMap = () => {
     const [useTransitFilter, setUseTransitFilter] = useState(false);
     const [useLifestyleFilter, setUseLifestyleFilter] = useState(false);
     const [maxTotalCost, setMaxTotalCost] = useState(19000);
+    const [minTotalCost, setMinTotalCost] = useState(10000);
 
     const handleMapClick = useCallback((event) => {
         const { lngLat } = event;
@@ -109,15 +110,15 @@ const MapboxNobrokerMap = () => {
                     property.propertySize >= minPropertySize &&
                     property.type == 'BHK'+bhk &&
                     property.photos.length !=0 &&
-                    (property.waterSupply === 'CORPORATION' ||  property.waterSupply === 'CORP_BORE') &&
+                    // (property.waterSupply === 'CORPORATION' ||  property.waterSupply === 'CORP_BORE') &&
                     (!useTransitFilter || (property.score?.transit && property.score.transit >= transitScore)) &&
                     (!useLifestyleFilter || (property.score?.lifestyle && property.score.lifestyle >= lifestyleScore)) &&
-                    totalCost <= maxTotalCost;
+                    totalCost >= minTotalCost && totalCost <= maxTotalCost;
             });
           // console.log(filtered.map(v=>v.photos),'filtered')
             setFilteredProperties(filtered);
         }
-    }, [allProperties, bathrooms, minPropertySize,bhk, transitScore, lifestyleScore, useTransitFilter, useLifestyleFilter, maxTotalCost]);
+    }, [allProperties, bathrooms, minPropertySize,bhk, transitScore, lifestyleScore, useTransitFilter, useLifestyleFilter, maxTotalCost,minTotalCost]);
 
     const getGoogleMapsUrl = (lat, lng) => {
         return `https://www.google.com/maps/dir/?api=1&origin=${OFFICE_LAT},${OFFICE_LNG}&destination=${lat},${lng}`;
@@ -249,6 +250,15 @@ const MapboxNobrokerMap = () => {
                         />
                     </label>
                     <label>
+                        Min Total Cost:
+                        <input
+                            type='number'
+                            step={1000}
+                            value={minTotalCost}
+                            onChange={(e) => setMinTotalCost(Number(e.target.value))}
+
+                        />
+                    </label> <label>
                         Max Total Cost:
                         <input
                             type='number'
